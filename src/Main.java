@@ -1,3 +1,6 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -6,6 +9,7 @@ public class Main {
         //Scanner and workout list
         Scanner scanner = new Scanner(System.in);
         ArrayList<Workout> workouts = new ArrayList<>();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
         boolean running = true;
 
@@ -51,6 +55,19 @@ public class Main {
                     && !workoutType.equalsIgnoreCase("Swim")) {
                     System.out.print("Please enter Run, Walk, or Swim: ");
                     workoutType = scanner.nextLine();
+                }
+
+                //Validation of date
+                LocalDate workoutDate = null;
+
+                while (workoutDate == null) {
+                    System.out.print("Please enter a workout date (MM/dd/yyyy): ");
+                    String dateInput = scanner.nextLine();
+                    try {
+                        workoutDate = LocalDate.parse(dateInput, dateFormatter);
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid format. Please enter a valid workout date (MM/dd/yyyy): ");
+                    }
                 }
 
                 String distanceUnit;
@@ -121,7 +138,7 @@ public class Main {
                 int totalDurationSeconds = (durationMinutes * 60) + durationSecondsPart;
 
                 //Create and store the workout
-                Workout workout1 = new Workout(workoutType, distance, distanceUnit, totalDurationSeconds);
+                Workout workout1 = new Workout(workoutType, workoutDate, distance, distanceUnit, totalDurationSeconds);
 
                 workouts.add(workout1);
                 workout1.displayWorkout();
@@ -143,14 +160,25 @@ public class Main {
 
             //Option THREE: View workout statistics
             if (choice == 3) {
-                System.out.println("Total workouts: " + workouts.size());
+
 
                 double totalMiles = 0;
                 double totalYards = 0;
                 int totalDurationSeconds = 0;
+                int runCount = 0;
+                int walkCount = 0;
+                int swimCount = 0;
 
+                //Counts each workout type
                 for (Workout workout : workouts) {
+                    if (workout.getWorkoutType().equalsIgnoreCase("Run")) {
+                        runCount++;
+                    }
+                    if (workout.getWorkoutType().equalsIgnoreCase("Walk")) {
+                        walkCount++;
+                    }
                     if (workout.getWorkoutType().equalsIgnoreCase("Swim")) {
+                        swimCount++;
                         totalYards += workout.getDistance();
                     } else {
                         totalMiles += workout.getDistance();
@@ -164,9 +192,23 @@ public class Main {
                 int totalMinutes = remainingSeconds / 60;
                 int totalSeconds = remainingSeconds % 60;
 
+                //Calculate average duration
+                int averageDurationSeconds = 0;
+                if (!workouts.isEmpty()) {
+                    averageDurationSeconds = totalDurationSeconds / workouts.size();
+                }
+                int averageMinutes = averageDurationSeconds / 60;
+                int averageSeconds = averageDurationSeconds % 60;
+
+                //Prints statistics OPTION THREE
+                System.out.println("Total workouts: " + workouts.size());
+                System.out.println("Runs: " + runCount);
+                System.out.println("Walks: " + walkCount);
+                System.out.println("Swims: " + swimCount);
                 System.out.println("Total run/walk distance: " + totalMiles + " miles");
                 System.out.println("Total swim distance: " + totalYards + " yards");
                 System.out.println("Total workout time: " + totalHours + " hours " + totalMinutes + " minutes " + totalSeconds + " seconds");
+                System.out.println("Average workout duration: " + averageMinutes + " minutes " + averageSeconds + " seconds");
             }
 
 
