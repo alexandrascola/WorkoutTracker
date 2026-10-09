@@ -12,7 +12,10 @@ public class Main {
         //Scanner and workout list
         Scanner scanner = new Scanner(System.in);
         ArrayList<Workout> workouts = new ArrayList<>();
+        //Formatter for manually entered dates
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        //Formatter for the strava dates
+        DateTimeFormatter stravaDateFormatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
         // File object for data
         File activityFile = new File("data/activities_capstone.csv");
@@ -213,8 +216,8 @@ public class Main {
                 System.out.println("Runs: " + runCount);
                 System.out.println("Walks: " + walkCount);
                 System.out.println("Swims: " + swimCount);
-                System.out.println("Total run/walk distance: " + totalMiles + " miles");
-                System.out.println("Total swim distance: " + totalYards + " yards");
+                System.out.printf("Total run/walk distance: %.2f miles%n", totalMiles);
+                System.out.printf("Total swim distance: %.0f yards%n", totalYards);
                 System.out.println("Total workout time: " + totalHours + " hours " + totalMinutes + " minutes " + totalSeconds + " seconds");
                 System.out.println("Average workout duration: " + averageMinutes + " minutes " + averageSeconds + " seconds");
             }
@@ -244,10 +247,11 @@ public class Main {
 
                             String[] parts = line.split(",");
 
-                            String activityType = parts[1];
-                            int elapsedTime = Integer.parseInt(parts[2]);
-                            double distanceMeters = Double.parseDouble(parts[3]);
-                            LocalDate workoutDate = LocalDate.parse(parts[4], dateFormatter);
+                            //Cleaned after ActivityID removal from csv
+                            String activityType = parts[0];
+                            int elapsedTime = Integer.parseInt(parts[1]);
+                            double distanceMeters = Double.parseDouble(parts[2]);
+                            LocalDate workoutDate = LocalDate.parse(parts[3], stravaDateFormatter); //accepts strava date format
 
                             // Import SUPPORTED activity types
                             if (activityType.equalsIgnoreCase("Run")
