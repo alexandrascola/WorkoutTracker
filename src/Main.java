@@ -165,10 +165,12 @@ public class Main {
                 if (workouts.isEmpty()) {
                     System.out.println("No workouts have been added.");
                 } else {
-                    for (Workout workout : workouts) {
-                        workout.displayWorkout();
-                        System.out.println();
-                    }
+                    // Display workouts using stream
+                    workouts.stream()
+                            .forEach(workout -> {
+                                workout.displayWorkout();
+                                System.out.println();
+                            });
                 }
             }
 
@@ -178,44 +180,75 @@ public class Main {
             //Option THREE: View workout statistics
             if (choice == 3) {
 
+                // Calculate total run/walk distance using stream
+                double totalMiles = workouts.stream()
+                        .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Run")
+                                || workout.getWorkoutType().equalsIgnoreCase("Walk"))
+                        .mapToDouble(workout -> workout.getDistance())
+                        .sum();
+                // Calculate total swim distance using stream
+                double totalYards = workouts.stream()
+                        .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Swim"))
+                        .mapToDouble(workout -> workout.getDistance())
+                        .sum();
 
-                double totalMiles = 0;
-                double totalYards = 0;
-                int totalDurationSeconds = 0;
-                int runCount = 0;
-                int walkCount = 0;
-                int swimCount = 0;
+                // Calculate total workout duration using stream
+                int totalDurationSeconds = workouts.stream()
+                        .mapToInt(workout -> workout.getDurationSeconds())
+                        .sum();
 
-                //Counts each workout type
-                for (Workout workout : workouts) {
-                    if (workout.getWorkoutType().equalsIgnoreCase("Run")) {
-                        runCount++;
-                    }
-                    if (workout.getWorkoutType().equalsIgnoreCase("Walk")) {
-                        walkCount++;
-                    }
-                    if (workout.getWorkoutType().equalsIgnoreCase("Swim")) {
-                        swimCount++;
-                        totalYards += workout.getDistance();
-                    } else {
-                        totalMiles += workout.getDistance();
-                    }
+                // Count activities using streams
+                long runCount = workouts.stream()
+                        .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Run"))
+                        .count();
 
-                    totalDurationSeconds += workout.getDurationSeconds();
-                }
+                long walkCount = workouts.stream()
+                        .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Walk"))
+                        .count();
+
+                long swimCount = workouts.stream()
+                        .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Swim"))
+                        .count();
+
+
                 //Convert total duration
                 int totalHours = totalDurationSeconds / 3600;
                 int remainingSeconds = totalDurationSeconds % 3600;
                 int totalMinutes = remainingSeconds / 60;
                 int totalSeconds = remainingSeconds % 60;
 
-                //Calculate average duration
-                int averageDurationSeconds = 0;
-                if (!workouts.isEmpty()) {
-                    averageDurationSeconds = totalDurationSeconds / workouts.size();
-                }
+
+
+                // Find longest workout duration using stream
+                int longestDurationSeconds = workouts.stream()
+                        .mapToInt(workout -> workout.getDurationSeconds())
+                        .max()
+                        .orElse(0);
+
+                int longestMinutes = longestDurationSeconds / 60;
+                int longestSeconds = longestDurationSeconds % 60;
+
+                // Find shortest workout duration using stream
+                int shortestDurationSeconds = workouts.stream()
+                        .mapToInt(workout -> workout.getDurationSeconds())
+                        .min()
+                        .orElse(0);
+
+                int shortestMinutes = shortestDurationSeconds / 60;
+                int shortestSeconds = shortestDurationSeconds % 60;
+
+
+
+                // Calculate average workout duration using stream
+                double averageDuration = workouts.stream()
+                        .mapToInt(workout -> workout.getDurationSeconds())
+                        .average()
+                        .orElse(0);
+
+                int averageDurationSeconds = (int) averageDuration;
                 int averageMinutes = averageDurationSeconds / 60;
                 int averageSeconds = averageDurationSeconds % 60;
+
 
                 //Prints statistics OPTION THREE
                 System.out.println("Total workouts: " + workouts.size());
@@ -226,6 +259,8 @@ public class Main {
                 System.out.printf("Total swim distance: %.0f yards%n", totalYards);
                 System.out.println("Total workout time: " + totalHours + " hours " + totalMinutes + " minutes " + totalSeconds + " seconds");
                 System.out.println("Average workout duration: " + averageMinutes + " minutes " + averageSeconds + " seconds");
+                System.out.println("Longest workout duration: " + longestMinutes + " minutes " + longestSeconds + " seconds");
+                System.out.println("Shortest workout duration: " + shortestMinutes + " minutes " + shortestSeconds + " seconds");
             }
 
 
