@@ -26,14 +26,7 @@ public class Main {
         //Loop to repeat until user chooses exit
         while (running) {
             //Display user main menu
-            System.out.println("------------------------");
-            System.out.println("WORKOUT TRACKER");
-            System.out.println("-----------------------");
-            System.out.println("1. Add Workout");
-            System.out.println("2. View Workouts");
-            System.out.println("3. View Statistics");
-            System.out.println("4. Import Strava Data");
-            System.out.println("5. Exit");
+            printMenu(); //uses helper method to display menu
 
 
             //Validate user menu choice
@@ -162,105 +155,14 @@ public class Main {
 
             //Option TWO: View all workouts
             if (choice == 2) {
-                if (workouts.isEmpty()) {
-                    System.out.println("No workouts have been added.");
-                } else {
-                    // Display workouts using stream
-                    workouts.stream()
-                            .forEach(workout -> {
-                                workout.displayWorkout();
-                                System.out.println();
-                            });
-                }
+                viewWorkouts(workouts);
             }
-
 
 
 
             //Option THREE: View workout statistics
             if (choice == 3) {
-
-                // Calculate total run/walk distance using stream
-                double totalMiles = workouts.stream()
-                        .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Run")
-                                || workout.getWorkoutType().equalsIgnoreCase("Walk"))
-                        .mapToDouble(workout -> workout.getDistance())
-                        .sum();
-                // Calculate total swim distance using stream
-                double totalYards = workouts.stream()
-                        .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Swim"))
-                        .mapToDouble(workout -> workout.getDistance())
-                        .sum();
-
-                // Calculate total workout duration using stream
-                int totalDurationSeconds = workouts.stream()
-                        .mapToInt(workout -> workout.getDurationSeconds())
-                        .sum();
-
-                // Count activities using streams
-                long runCount = workouts.stream()
-                        .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Run"))
-                        .count();
-
-                long walkCount = workouts.stream()
-                        .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Walk"))
-                        .count();
-
-                long swimCount = workouts.stream()
-                        .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Swim"))
-                        .count();
-
-
-                //Convert total duration
-                int totalHours = totalDurationSeconds / 3600;
-                int remainingSeconds = totalDurationSeconds % 3600;
-                int totalMinutes = remainingSeconds / 60;
-                int totalSeconds = remainingSeconds % 60;
-
-
-
-                // Find longest workout duration using stream
-                int longestDurationSeconds = workouts.stream()
-                        .mapToInt(workout -> workout.getDurationSeconds())
-                        .max()
-                        .orElse(0);
-
-                int longestMinutes = longestDurationSeconds / 60;
-                int longestSeconds = longestDurationSeconds % 60;
-
-                // Find shortest workout duration using stream
-                int shortestDurationSeconds = workouts.stream()
-                        .mapToInt(workout -> workout.getDurationSeconds())
-                        .min()
-                        .orElse(0);
-
-                int shortestMinutes = shortestDurationSeconds / 60;
-                int shortestSeconds = shortestDurationSeconds % 60;
-
-
-
-                // Calculate average workout duration using stream
-                double averageDuration = workouts.stream()
-                        .mapToInt(workout -> workout.getDurationSeconds())
-                        .average()
-                        .orElse(0);
-
-                int averageDurationSeconds = (int) averageDuration;
-                int averageMinutes = averageDurationSeconds / 60;
-                int averageSeconds = averageDurationSeconds % 60;
-
-
-                //Prints statistics OPTION THREE
-                System.out.println("Total workouts: " + workouts.size());
-                System.out.println("Runs: " + runCount);
-                System.out.println("Walks: " + walkCount);
-                System.out.println("Swims: " + swimCount);
-                System.out.printf("Total run/walk distance: %.2f miles%n", totalMiles);
-                System.out.printf("Total swim distance: %.0f yards%n", totalYards);
-                System.out.println("Total workout time: " + totalHours + " hours " + totalMinutes + " minutes " + totalSeconds + " seconds");
-                System.out.println("Average workout duration: " + averageMinutes + " minutes " + averageSeconds + " seconds");
-                System.out.println("Longest workout duration: " + longestMinutes + " minutes " + longestSeconds + " seconds");
-                System.out.println("Shortest workout duration: " + shortestMinutes + " minutes " + shortestSeconds + " seconds");
+                viewStatistics(workouts);
             }
 
 
@@ -288,6 +190,127 @@ public class Main {
         }
         //DON'T FORGET TO CLOSE YOUR SCANNER!!!
         scanner.close();
+    } //CLOSING MAIN BRACKET---Switching to helper methods
+
+
+
+
+
+
+    // Helper method to display main menu
+    public static void printMenu() {
+        System.out.println("------------------------");
+        System.out.println("WORKOUT TRACKER");
+        System.out.println("------------------------");
+        System.out.println("1. Add Workout");
+        System.out.println("2. View Workouts");
+        System.out.println("3. View Statistics");
+        System.out.println("4. Import Strava Data");
+        System.out.println("5. Exit");
+    }
+
+    // Helper method to view workouts
+    public static void viewWorkouts(ArrayList<Workout> workouts) {
+
+        if (workouts.isEmpty()) {
+            System.out.println("No workouts have been added yet.");
+        } else {
+            // Display workouts using stream
+            workouts.stream()
+                    .forEach(workout -> {
+                        workout.displayWorkout();
+                        System.out.println();
+                    });
+        }
+    }
+
+    // Helper method to view workout statistics
+    public static void viewStatistics(ArrayList<Workout> workouts) {
+        // Calculate total run/walk distance using stream
+        double totalMiles = workouts.stream()
+                .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Run")
+                        || workout.getWorkoutType().equalsIgnoreCase("Walk"))
+                .mapToDouble(workout -> workout.getDistance())
+                .sum();
+        // Calculate total swim distance using stream
+        double totalYards = workouts.stream()
+                .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Swim"))
+                .mapToDouble(workout -> workout.getDistance())
+                .sum();
+
+        // Calculate total workout duration using stream
+        int totalDurationSeconds = workouts.stream()
+                .mapToInt(workout -> workout.getDurationSeconds())
+                .sum();
+
+        // Count activities using streams
+        long runCount = workouts.stream()
+                .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Run"))
+                .count();
+
+        long walkCount = workouts.stream()
+                .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Walk"))
+                .count();
+
+        long swimCount = workouts.stream()
+                .filter(workout -> workout.getWorkoutType().equalsIgnoreCase("Swim"))
+                .count();
+
+
+        //Convert total duration
+        int totalHours = totalDurationSeconds / 3600;
+        int remainingSeconds = totalDurationSeconds % 3600;
+        int totalMinutes = remainingSeconds / 60;
+        int totalSeconds = remainingSeconds % 60;
+
+
+
+        // Find longest workout duration using stream
+        int longestDurationSeconds = workouts.stream()
+                .mapToInt(workout -> workout.getDurationSeconds())
+                .max()
+                .orElse(0);
+
+        int longestMinutes = longestDurationSeconds / 60;
+        int longestSeconds = longestDurationSeconds % 60;
+
+        // Find shortest workout duration using stream
+        int shortestDurationSeconds = workouts.stream()
+                .mapToInt(workout -> workout.getDurationSeconds())
+                .min()
+                .orElse(0);
+
+        int shortestMinutes = shortestDurationSeconds / 60;
+        int shortestSeconds = shortestDurationSeconds % 60;
+
+
+
+        // Calculate average workout duration using stream
+        double averageDuration = workouts.stream()
+                .mapToInt(workout -> workout.getDurationSeconds())
+                .average()
+                .orElse(0);
+
+        int averageDurationSeconds = (int) averageDuration;
+        int averageMinutes = averageDurationSeconds / 60;
+        int averageSeconds = averageDurationSeconds % 60;
+
+
+        //Prints statistics OPTION THREE
+        System.out.println("Total workouts: " + workouts.size());
+        System.out.println("Runs: " + runCount);
+        System.out.println("Walks: " + walkCount);
+        System.out.println("Swims: " + swimCount);
+        System.out.printf("Total run/walk distance: %.2f miles%n", totalMiles);
+        System.out.printf("Total swim distance: %.0f yards%n", totalYards);
+        System.out.println("Total workout time: " + totalHours + " hours " + totalMinutes + " minutes " + totalSeconds + " seconds");
+        System.out.println("Average workout duration: " + averageMinutes + " minutes " + averageSeconds + " seconds");
+        System.out.println("Longest workout duration: " + longestMinutes + " minutes " + longestSeconds + " seconds");
+        System.out.println("Shortest workout duration: " + shortestMinutes + " minutes " + shortestSeconds + " seconds");
+
+
+
+
     }
 
     //Helper method to import strava data
