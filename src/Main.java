@@ -50,107 +50,10 @@ public class Main {
 
 
 
-            //Option ONE: Add new workout
+            // Option ONE: Add new workouts
             if (choice == 1) {
-                System.out.println("Enter workout type: ");
-                String workoutType = scanner.nextLine();
-
-                //Validation for workout type
-                while(!workoutType.equalsIgnoreCase("Run")
-                    && !workoutType.equalsIgnoreCase("Walk")
-                    && !workoutType.equalsIgnoreCase("Swim")) {
-                    System.out.print("Please enter Run, Walk, or Swim: ");
-                    workoutType = scanner.nextLine();
-                }
-
-                //Validation of date
-                LocalDate workoutDate = null;
-
-                while (workoutDate == null) {
-                    System.out.print("Please enter a workout date (MM/dd/yyyy): ");
-                    String dateInput = scanner.nextLine();
-                    try {
-                        workoutDate = LocalDate.parse(dateInput, dateFormatter);
-                    } catch (DateTimeParseException e) {
-                        System.out.println("Invalid format. Please enter a valid workout date (MM/dd/yyyy): ");
-                    }
-                }
-
-                String distanceUnit;
-                if (workoutType.equalsIgnoreCase("Swim")) {
-                    distanceUnit = "yards";
-                } else {
-                    distanceUnit = "miles";
-                }
-
-                //Validate workout distance
-                double distance = 0;
-
-                while (distance <= 0) {
-                    System.out.print("Enter distance in " + distanceUnit + ": ");
-
-                    if (scanner.hasNextDouble()) {
-                        distance = scanner.nextDouble();
-                        scanner.nextLine();
-
-                        if (distance <= 0) {
-                            System.out.println("Please enter a distance greater than 0.");
-                        }
-                    } else {
-                        System.out.println("Please enter a valid number.");
-                        scanner.nextLine();
-                    }
-                }
-                //System.out.println("Enter distance in " + distanceUnit + ": ");
-                //double distance = scanner.nextDouble();
-
-                // Validate duration in minutes
-                int durationMinutes = -1;
-
-                while (durationMinutes < 0) {
-                    System.out.print("Enter duration minutes: ");
-
-                    if (scanner.hasNextInt()) {
-                        durationMinutes = scanner.nextInt();
-                        scanner.nextLine();
-
-                        if (durationMinutes < 0) {
-                            System.out.println("Duration in minutes must be 0 or greater.");
-                        }
-                    } else {
-                        System.out.println("Please enter a valid whole number.");
-                        scanner.nextLine();
-                    }
-                }
-
-                // Validate duration seconds
-                int durationSecondsPart = -1;
-
-                while (durationSecondsPart < 0 || durationSecondsPart > 59) {
-                    System.out.print("Enter duration seconds: ");
-
-                    if (scanner.hasNextInt()) {
-                        durationSecondsPart = scanner.nextInt();
-                        scanner.nextLine();
-
-                        if (durationSecondsPart < 0 || durationSecondsPart > 59) {
-                            System.out.println("Please enter a number of seconds between 0 and 59.");
-                        }
-                    } else {
-                        System.out.println("Please enter a valid whole number.");
-                        scanner.nextLine();
-                    }
-                }
-                int totalDurationSeconds = (durationMinutes * 60) + durationSecondsPart;
-
-                //Create and store the workout
-                Workout workout1 = new Workout(workoutType, workoutDate, distance, distanceUnit, totalDurationSeconds);
-
-                workouts.add(workout1);
-                workout1.displayWorkout();
+                addWorkout(scanner, workouts, dateFormatter);
             }
-
-
 
 
             //Option TWO: View all workouts
@@ -159,12 +62,10 @@ public class Main {
             }
 
 
-
             //Option THREE: View workout statistics
             if (choice == 3) {
                 viewStatistics(workouts);
             }
-
 
 
             // Option FOUR: Calls strava helper method
@@ -182,7 +83,6 @@ public class Main {
             }
 
 
-
             //Option FIVE: Exit program
             if (choice == 5) {
                 running = false;
@@ -196,7 +96,7 @@ public class Main {
 
 
 
-
+    //HELPER METHODS
     // Helper method to display main menu
     public static void printMenu() {
         System.out.println("------------------------");
@@ -207,6 +107,106 @@ public class Main {
         System.out.println("3. View Statistics");
         System.out.println("4. Import Strava Data");
         System.out.println("5. Exit");
+    }
+
+    //Helper method to add a workout
+    public static void addWorkout(Scanner scanner, ArrayList<Workout> workouts, DateTimeFormatter dateFormatter) {
+        System.out.println("Enter workout type: ");
+        String workoutType = scanner.nextLine();
+
+        //Validation for workout type
+        while(!workoutType.equalsIgnoreCase("Run")
+                && !workoutType.equalsIgnoreCase("Walk")
+                && !workoutType.equalsIgnoreCase("Swim")) {
+            System.out.print("Please enter Run, Walk, or Swim: ");
+            workoutType = scanner.nextLine();
+        }
+
+        //Validation of date
+        LocalDate workoutDate = null;
+
+        while (workoutDate == null) {
+            System.out.print("Please enter a workout date (MM/dd/yyyy): ");
+            String dateInput = scanner.nextLine();
+            try {
+                workoutDate = LocalDate.parse(dateInput, dateFormatter);
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid format. Please enter a valid workout date (MM/dd/yyyy): ");
+            }
+        }
+
+        String distanceUnit;
+        if (workoutType.equalsIgnoreCase("Swim")) {
+            distanceUnit = "yards";
+        } else {
+            distanceUnit = "miles";
+        }
+
+        //Validate workout distance
+        double distance = 0;
+
+        while (distance <= 0) {
+            System.out.print("Enter distance in " + distanceUnit + ": ");
+
+            if (scanner.hasNextDouble()) {
+                distance = scanner.nextDouble();
+                scanner.nextLine();
+
+                if (distance <= 0) {
+                    System.out.println("Please enter a distance greater than 0.");
+                }
+            } else {
+                System.out.println("Please enter a valid number.");
+                scanner.nextLine();
+            }
+        }
+        //System.out.println("Enter distance in " + distanceUnit + ": ");
+        //double distance = scanner.nextDouble();
+
+        // Validate duration in minutes
+        int durationMinutes = -1;
+
+        while (durationMinutes < 0) {
+            System.out.print("Enter duration minutes: ");
+
+            if (scanner.hasNextInt()) {
+                durationMinutes = scanner.nextInt();
+                scanner.nextLine();
+
+                if (durationMinutes < 0) {
+                    System.out.println("Duration in minutes must be 0 or greater.");
+                }
+            } else {
+                System.out.println("Please enter a valid whole number.");
+                scanner.nextLine();
+            }
+        }
+
+        // Validate duration seconds
+        int durationSecondsPart = -1;
+
+        while (durationSecondsPart < 0 || durationSecondsPart > 59) {
+            System.out.print("Enter duration seconds: ");
+
+            if (scanner.hasNextInt()) {
+                durationSecondsPart = scanner.nextInt();
+                scanner.nextLine();
+
+                if (durationSecondsPart < 0 || durationSecondsPart > 59) {
+                    System.out.println("Please enter a number of seconds between 0 and 59.");
+                }
+            } else {
+                System.out.println("Please enter a valid whole number.");
+                scanner.nextLine();
+            }
+        }
+        int totalDurationSeconds = (durationMinutes * 60) + durationSecondsPart;
+
+        //Create and store the workout
+        Workout workout1 = new Workout(workoutType, workoutDate, distance, distanceUnit, totalDurationSeconds);
+
+        workouts.add(workout1);
+        workout1.displayWorkout();
     }
 
     // Helper method to view workouts
